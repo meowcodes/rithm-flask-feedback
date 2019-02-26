@@ -46,3 +46,7 @@ def log_in():
     else:
         return render_template("login.html", form=form)
 
+@app.route('/secret') 
+def show_secret():
+    return "You made it!"
+
