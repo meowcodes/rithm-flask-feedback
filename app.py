@@ -68,8 +68,15 @@ def log_in():
 
 @app.route('/secret') 
 def secret():
-
+    """" show secret page to authorized users only"""
     if "username" in session:
         return "You made it!"
     else:
         return redirect('/')
+
+
+@app.route('/logout') 
+def logout():    
+    """ loging out users by removing they username form session """
+    session.pop("username")
+    return redirect('/')
