@@ -48,3 +48,5 @@ class User(db.Model):
             return u
         else:
             return False
+
+                
