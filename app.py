@@ -6,7 +6,7 @@ from forms import RegisterForm
 
 app= Flask(__name__)
 app.config['SECRET_KEY'] = 'oh-so-secret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///feedback_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 

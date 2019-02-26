@@ -14,7 +14,7 @@ class User(db.Model):
                          primary_key=True)
     password = db.Column(db.Text, 
                          nullable=False)
-    email = db,Column(db.String(50),
+    email = db.Column(db.String(50),
                       nullable=False,
                       unique=True)
     first_name = db.Column(db.String(30),
@@ -33,7 +33,7 @@ class User(db.Model):
 
         # return instance of user w/username and hashed pwd
         return cls(username=username, password=hashed_utf8)
-        
+
     @classmethod
     def authenticate(cls, username, pwd):
         """Validate that user exists & password is correct.
