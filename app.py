@@ -38,6 +38,8 @@ def registeration():
         db.session.add(user)
         db.session.commit()
 
+        session["username"] = user.username
+
         return redirect ('/secret')
     else:
         return render_template("register.html", form=form)
@@ -56,15 +58,18 @@ def log_in():
         user = User.authentiate(username, password)
 
         if user:
-            session["user_username"] = user.username
+            session["username"] = user.username
             return redirect("/secret")
         else:
             form.username.errors = ["Bad username/password"]
 
     return render_template("login.html", form=form)
 
-@app.route('/secret') 
-def show_secret():
-    return "You made it!"
-    
 
+@app.route('/secret') 
+def secret():
+
+    if "username" in session:
+        return "You made it!"
+    else:
+        return redirect('/')
