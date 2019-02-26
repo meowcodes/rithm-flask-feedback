@@ -10,3 +10,17 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 debug = DebugToolbarExtension(app)
 connect_db(app)
+
+
+@app.route('/') 
+def show_index():
+    return redirect('/register')
+
+
+@app.route('/register', methods = ['GET', 'POST']) 
+def register():
+    """" render register page and handle register process"""
+    
+
+
+    return redirect('/register')
