@@ -40,7 +40,7 @@ def registeration():
 
         session["username"] = user.username
 
-        return redirect ('/secret')
+        return redirect (f"/users/{username}")
     else:
         return render_template("register.html", form=form)
 
@@ -59,19 +59,20 @@ def log_in():
 
         if user:
             session["username"] = user.username
-            return redirect("/secret")
+            return redirect(f"/users/{username}")
         else:
             form.username.errors = ["Bad username/password"]
 
     return render_template("login.html", form=form)
 
 
-@app.route('/secret') 
-def secret():
-    """" show secret page to authorized users only"""
-    if "username" in session:
-        return "You made it!"
+@app.route('/users/<username>') 
+def user_details(username):
+    """" show user_details page to the same user who has logged in"""
+    if session["username"] == username:
+        return render_template('user_details.html')
     else:
+        flash('You need to register and log in to view this page')
         return redirect('/')
 
 
