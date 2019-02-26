@@ -43,9 +43,11 @@ def registeration():
 
             session["username"] = user.username
 
-            return redirect (f"/users/{username}")
+            return redirect(f"/users/{username}")
+
         elif not username_unique:
             form.username.errors = ["Username already exists."]
+
         elif not email_unique:
             form.email.errors = ["Email already exists."]
     
@@ -77,7 +79,9 @@ def log_in():
 def user_details(username):
     """" show user_details page to the same user who has logged in"""
     if session["username"] == username:
-        return render_template('user_details.html')
+        # if user is authorized, render user_details
+        user = User.query.filter_by(username=username).first()
+        return render_template('user_details.html', user = user)
     else:
         flash('You need to register and log in to view this page')
         return redirect('/')

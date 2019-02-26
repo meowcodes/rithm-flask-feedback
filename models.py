@@ -65,4 +65,32 @@ class User(db.Model):
         else:
             return False
 
-                
+ class Feedback(db.Model):
+    """ Feedback Model """
+
+    __tablename__ = "feedbacks"
+
+    id = db.Column(db.Integer,
+                   autoincrement=True,
+                   primary_key=True)
+    title = db.Column(db.String(100), 
+                      nullable=False)
+    content = db.Column(db.Text,
+                        nullable=False)
+    username = db.Column(db.String(20),
+                         db.ForeighKey('users.username'),
+                         nullable=False)
+
+    # @classmethod
+    # def check_uniqueness(cls, key, value):
+    #     """ Check uniqueness of value """
+
+    #     pair = {key:value}
+
+    #     # falsey if unique
+    #     duplicate = User.query.filter_by(**pair).first()
+
+    #     # return False if duplicate exists
+    #     # return True if no duplicates
+    #     return False if duplicate else True
+               
