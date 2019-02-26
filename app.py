@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, jsonify
+from flask import Flask, request, render_template, redirect, jsonify, session
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User
 from forms import RegisterForm
@@ -26,9 +26,19 @@ def registeration():
     form = RegisterForm()
 
     if form.validate_on_submit():
-        #  call the classmethod register on User class
-        return redirect ('/secret')
+        username = form.username.data
+        password = form.password.data
+        
+        user = User.register(username, password)
 
+        user.email = form.email.data
+        user.first_name = form.first_name.data
+        user.last_name = form.last_name.data
+
+        db.session.add(user)
+        db.session.commit()
+
+        return redirect ('/secret')
     else:
         return render_template("register.html", form=form)
 
@@ -40,11 +50,18 @@ def log_in():
     form = LoginForm()
 
     if form.validate_on_submit():
-        #  call the classmethod login on User class
-        return redirect ('/secret')
+        username = form.username.data
+        password = form.password.data
+        
+        user = User.authentiate(username, password)
 
-    else:
-        return render_template("login.html", form=form)
+        if user:
+            session["user_username"] = user.username
+            return redirect("/secret")
+        else:
+            form.username.errors = ["Bad username/password"]
+
+    return render_template("login.html", form=form)
 
 @app.route('/secret') 
 def show_secret():
