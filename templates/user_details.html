@@ -6,4 +6,11 @@
     <p>Email: {{user.email}}</p>
     <p>Username: {{user.username}}</p>
 
+    {% for feedback in user.feedbacks %}
+    <a href="/feedback/{{feedback.id}}/update"> {{ feedback.title }}  </a> 
+    <form action="/feedback/{{feedback.id}}/delete" method="Post">
+        <button> Delete Feedback </button>
+    </form>
+    {% endfor %}
+    
 {% endblock %}
