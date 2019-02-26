@@ -24,6 +24,20 @@ class User(db.Model):
     last_name = db.Column(db.String(30),
                           nullable=False)
 
+    @classmethod
+    def check_uniqueness(cls, key, value):
+        """ Check uniqueness of value """
+
+        pair = {key:value}
+
+        # falsey if unique
+        duplicate = User.query.filter_by(**pair).first()
+
+        # return False if duplicate exists
+        # return True if no duplicates
+        return False if duplicate else True
+
+
 
     @classmethod
     def register(cls, username, pwd):

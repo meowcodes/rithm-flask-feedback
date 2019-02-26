@@ -3,7 +3,6 @@ from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User
 from forms import RegisterForm
 
-
 app= Flask(__name__)
 app.config['SECRET_KEY'] = 'oh-so-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///feedback_db'
@@ -12,7 +11,6 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 debug = DebugToolbarExtension(app)
 connect_db(app)
-
 
 @app.route('/') 
 def show_index():
@@ -28,21 +26,30 @@ def registeration():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        
-        user = User.register(username, password)
+        email = form.email.data
 
-        user.email = form.email.data
-        user.first_name = form.first_name.data
-        user.last_name = form.last_name.data
+        username_unique = User.check_uniqueness("username", username)
+        email_unique = User.check_uniqueness("email", email)
 
-        db.session.add(user)
-        db.session.commit()
+        if username_unique and email_unique:
+            user = User.register(username, password)
 
-        session["username"] = user.username
+            user.email = form.email.data
+            user.first_name = form.first_name.data
+            user.last_name = form.last_name.data
 
-        return redirect (f"/users/{username}")
-    else:
-        return render_template("register.html", form=form)
+            db.session.add(user)
+            db.session.commit()
+
+            session["username"] = user.username
+
+            return redirect (f"/users/{username}")
+        elif not username_unique:
+            form.username.errors = ["Username already exists."]
+        elif not email_unique:
+            form.email.errors = ["Email already exists."]
+    
+    return render_template("register.html", form=form)
 
 
 @app.route('/login', methods = ['GET', 'POST']) 
