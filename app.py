@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, redirect, jsonify, session
 from flask_debugtoolbar import DebugToolbarExtension
+
 from models import db, connect_db, User
 from forms import RegisterForm
 
@@ -17,7 +18,7 @@ def show_index():
     return redirect('/register')
 
 
-@app.route('/register', methods = ['GET', 'POST']) 
+@app.route('/register', methods=['GET', 'POST']) 
 def registeration():
     """" render register page and handle register process"""
     
@@ -75,6 +76,12 @@ def log_in():
     return render_template("login.html", form=form)
 
 
+@app.route('/logout') 
+def logout():    
+    """ loging out users by removing they username form session """
+    session.pop("username")
+    return redirect('/')
+
 @app.route('/users/<username>') 
 def user_details(username):
     """" show user_details page to the same user who has logged in"""
@@ -87,8 +94,3 @@ def user_details(username):
         return redirect('/')
 
 
-@app.route('/logout') 
-def logout():    
-    """ loging out users by removing they username form session """
-    session.pop("username")
-    return redirect('/')

@@ -1,11 +1,16 @@
 from flask_sqlalchemy import SQLAlchemy
-db= SQLAlchemy()
+from flask_bcrypt import Bcrypt
+
+db = SQLAlchemy()
+bcrypt = Bcrypt()
+
 
 def connect_db(app):
     """ Connects to database """
 
     db.app = app
     db.init_app(app)
+
 
 class User(db.Model):
     """ User Model """
@@ -28,7 +33,7 @@ class User(db.Model):
     def check_uniqueness(cls, key, value):
         """ Check uniqueness of value """
 
-        pair = {key:value}
+        pair = {key : value}
 
         # falsey if unique
         duplicate = User.query.filter_by(**pair).first()
@@ -36,7 +41,6 @@ class User(db.Model):
         # return False if duplicate exists
         # return True if no duplicates
         return False if duplicate else True
-
 
 
     @classmethod
@@ -65,7 +69,7 @@ class User(db.Model):
         else:
             return False
 
- class Feedback(db.Model):
+class Feedback(db.Model):
     """ Feedback Model """
 
     __tablename__ = "feedbacks"
@@ -78,7 +82,7 @@ class User(db.Model):
     content = db.Column(db.Text,
                         nullable=False)
     username = db.Column(db.String(20),
-                         db.ForeighKey('users.username'),
+                         db.ForeignKey('users.username'),
                          nullable=False)
 
     # @classmethod
