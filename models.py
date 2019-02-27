@@ -88,17 +88,3 @@ class Feedback(db.Model):
     username = db.Column(db.String(20),
                          db.ForeignKey('users.username'),
                          nullable=False)
-
-    # @classmethod
-    # def check_uniqueness(cls, key, value):
-    #     """ Check uniqueness of value """
-
-    #     pair = {key:value}
-
-    #     # falsey if unique
-    #     duplicate = User.query.filter_by(**pair).first()
-
-    #     # return False if duplicate exists
-    #     # return True if no duplicates
-    #     return False if duplicate else True
-               

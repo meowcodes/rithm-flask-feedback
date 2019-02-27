@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, jsonify, session
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, connect_db, User, Feedback
-from forms import RegisterForm
+from forms import RegisterForm, LoginForm, FeedbackForm
 
 app= Flask(__name__)
 app.config['SECRET_KEY'] = 'oh-so-secret'
@@ -117,41 +117,51 @@ def delete_user(username):
 def add_feedback(username):
     """ Show and process add feedback form """
 
-    form = AddFeedbackForm()
+    form = FeedbackForm()
     
     if session["username"] == username:
 
         user = User.query.filter_by(username=username).first()
         if form.validate_on_submit():
-            # add feedback
+            title = form.title.data
+            content = form.content.data
+            
+            new_feedback=Feedback(title=title, content=content)
+            db.session.add(new_feedback)
+            db.session.commit()
+
             return redirect(f"/users/{user.username}")
         else:
-            return render_template("add_feedback.html", form=form)
+            return render_template("add_feedback.html", form=form, user=user)
     else:
         flash('You need to register and log in to view this page')
         return redirect('/')
 
 
 @app.route('/feedback/<feedback_id>/update', methods=["GET", "POST"])
-def add_feedback(feedback_id):
+def update_feedback(feedback_id):
     """ Show and process edit feedback form """
 
-    form = EditFeedbackForm()
     feedback = Feedback.query.get(feedback_id)
+    form = FeedbackForm(feedback)
     
     if session["username"] == feedback.user.username:
         if form.validate_on_submit():
-            # edit feedback
+            feedback.title = form.title.data
+            feedback.content = form.content.data
+            
+            db.session.commit()
+
             return redirect(f"/users/{feedback.user.username}")
         else:
-            return render_template("add_feedback.html", form=form)
+            return render_template("update_feedback.html", form=form, feedback=feedback)
     else:
         flash('You need to register and log in to view this page')
         return redirect('/')
 
 
 @app.route('/feedback/<feedback_id>/delete', method=["POST"])
-def delete_feedback():
+def delete_feedback(feedback_id):
     """ Delete feedback """
     feedback = Feedback.query.get(feedback_id)
     
