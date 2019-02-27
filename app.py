@@ -65,7 +65,7 @@ def log_in():
         username = form.username.data
         password = form.password.data
         
-        user = User.authentiate(username, password)
+        user = User.authenticate(username, password)
 
         if user:
             session["username"] = user.username
@@ -88,6 +88,7 @@ def user_details(username):
     if session["username"] == username:
         # if user is authorized, render user_details
         user = User.query.filter_by(username=username).first()
+
         return render_template('user_details.html', user = user)
     else:
         flash('You need to register and log in to view this page')
@@ -126,7 +127,8 @@ def add_feedback(username):
             title = form.title.data
             content = form.content.data
             
-            new_feedback=Feedback(title=title, content=content)
+            new_feedback=Feedback(title=title, content=content, username=username)
+            
             db.session.add(new_feedback)
             db.session.commit()
 
@@ -141,9 +143,10 @@ def add_feedback(username):
 @app.route('/feedback/<feedback_id>/update', methods=["GET", "POST"])
 def update_feedback(feedback_id):
     """ Show and process edit feedback form """
-
+    
     feedback = Feedback.query.get(feedback_id)
-    form = FeedbackForm(feedback)
+    
+    form = FeedbackForm(title=feedback.title, content=feedback.content)
     
     if session["username"] == feedback.user.username:
         if form.validate_on_submit():
