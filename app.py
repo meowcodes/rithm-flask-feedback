@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, redirect, jsonify, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from models import db, connect_db, User
+from models import db, connect_db, User, Feedback
 from forms import RegisterForm
 
 app= Flask(__name__)
@@ -94,3 +94,73 @@ def user_details(username):
         return redirect('/')
 
 
+@app.route('/users/<username>/delete', methods=["POST"])
+def delete_user(username):
+    """ Remove user from database """
+
+    if session["username"] == username:
+
+        user = User.query.filter_by(username=username).first()
+
+        db.session.delete(user)
+        db.session.commit()
+
+        session.pop("username")
+
+        return redirect("/")
+    else:
+        flash('You need to register and log in to view this page')
+        return redirect('/')
+
+
+@app.route('/users/<username>/feedback/add', methods=["GET","POST"])
+def add_feedback(username):
+    """ Show and process add feedback form """
+
+    form = AddFeedbackForm()
+    
+    if session["username"] == username:
+
+        user = User.query.filter_by(username=username).first()
+        if form.validate_on_submit():
+            # add feedback
+            return redirect(f"/users/{user.username}")
+        else:
+            return render_template("add_feedback.html", form=form)
+    else:
+        flash('You need to register and log in to view this page')
+        return redirect('/')
+
+
+@app.route('/feedback/<feedback_id>/update', methods=["GET", "POST"])
+def add_feedback(feedback_id):
+    """ Show and process edit feedback form """
+
+    form = EditFeedbackForm()
+    feedback = Feedback.query.get(feedback_id)
+    
+    if session["username"] == feedback.user.username:
+        if form.validate_on_submit():
+            # edit feedback
+            return redirect(f"/users/{feedback.user.username}")
+        else:
+            return render_template("add_feedback.html", form=form)
+    else:
+        flash('You need to register and log in to view this page')
+        return redirect('/')
+
+
+@app.route('/feedback/<feedback_id>/delete', method=["POST"])
+def delete_feedback():
+    """ Delete feedback """
+    feedback = Feedback.query.get(feedback_id)
+    
+    if session["username"] == feedback.user.username:
+
+        db.session.delete(feedback)
+        db.session.commit()
+
+        return redirect(f"/users/{feedback.user.username}")
+    else:
+        flash('You need to register and log in to view this page')
+        return redirect('/')

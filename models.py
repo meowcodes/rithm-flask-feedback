@@ -29,6 +29,10 @@ class User(db.Model):
     last_name = db.Column(db.String(30),
                           nullable=False)
 
+    user = db.relationship('Feedback',
+                           backref='user',
+                           cascade="all, delete-orphan")
+
     @classmethod
     def check_uniqueness(cls, key, value):
         """ Check uniqueness of value """
