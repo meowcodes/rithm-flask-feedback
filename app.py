@@ -160,7 +160,7 @@ def update_feedback(feedback_id):
         return redirect('/')
 
 
-@app.route('/feedback/<feedback_id>/delete', method=["POST"])
+@app.route('/feedback/<feedback_id>/delete', methods=["POST"])
 def delete_feedback(feedback_id):
     """ Delete feedback """
     feedback = Feedback.query.get(feedback_id)
